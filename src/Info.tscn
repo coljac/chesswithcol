@@ -10,6 +10,7 @@ margin_left = 70.0
 margin_top = 424.0
 margin_right = -796.0
 margin_bottom = 424.0
+mouse_filter = 2
 
 [node name="TextureRect" type="TextureRect" parent="."]
 margin_left = -12.0

@@ -186,7 +186,7 @@ func capture_piece(loc):
 	set_state(loc, null)
 	
 func clone():
-	var copied_state = load("res://BoardState.gd").new()
+	var copied_state = load("res://src/BoardState.gd").new()
 	for x in range(1, 9):
 		for y in range(1, 9):
 			var l = Vector2(x, y)

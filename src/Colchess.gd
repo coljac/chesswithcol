@@ -1,8 +1,10 @@
 extends Node2D
 var label  = preload("res://src/label.tscn")
 
+const server = "localhost"
 onready var persistFile = "user://colchess_" + GameState.player + ".save"
 onready var saveHandle = File.new()
+onready var peer = NetworkedMultiplayerENet.new()
 var hello = preload("res://sounds/hello.mp3")
 var hmm = preload("res://sounds/hmmm.mp3")
 var heh = preload("res://sounds/heh.mp3")
@@ -88,50 +90,64 @@ remote func refresh_remote(game_dict):
 func _ready():
 	print("Player ", GameState.player, " Side: ", GameState.side)
 	var f = 1
+	var l = null
 	for c in "abcdefgh":
-		var l = label.instance()
+		l = label.instance()
 		l.text = c
 		l.set_position(Vector2(f*128 - 64, 1047))
 		add_child(l)
 		f += 1		
 	f = 1
 	for c in "12345678":
-		var l = label.instance()
+		l = label.instance()
 		l.text = c
 		l.set_position(Vector2(-20, 1024 - (f*128 - 64)))
 		add_child(l)
 		f += 1		
+	add_child_below_node(l, get_node("splash"))
 	load_game()
 	
 	network_connect()
 	
 func network_connect():
-	var peer = NetworkedMultiplayerENet.new()
-	var r = null
 	if GameState.player == "Col":
-		r = peer.create_server(16751, 2)
-		# peer.connect("network_peer_connected", self, "_connected")
+		print("Start server")
+		peer.create_server(16751, 2)
 	else:
-		print("Not col, connecting")
-		r = peer.create_client("localhost", 16751)
+		print("Not Col, connecting")
+		peer.create_client(server, 16751)
 	get_tree().network_peer = peer
-	get_tree().connect("network_peer_connected", self, "connected")
-	get_tree().connect("network_peer_disconnected", self, "disconnected")
+	get_tree().connect("network_peer_connected", self, "_connected")
+	get_tree().connect("network_peer_disconnected", self, "_disconnected")
 	get_tree().connect("connected_to_server", self, "connected")
 	get_tree().connect("connection_failed", self, "disconnected")
 	get_tree().connect("server_disconnected", self, "disconnected")
 	
+func _connected(id):
+	connected()
+	
+func _disconnected(id):
+	disconnected()
+	
 func connected():
 	shello()
 	GameState.connected = true
-	$Info.offline.visible = false
-	$Info.online.visible = true
-
+	get_node("Info/offline").visible = false
+	get_node("Info/online").visible = true
+	# if GameState.player == "Col":
+		# GameState.opponent = str(rpc("get_name")) + ""
+		# persistFile = "user://colchess_" + GameState.opponent + ".save"
+		#load_game()
+		
+remote func get_name():
+	print("ASKED")
+	return GameState.player
+	
 func disconnected():
 	shmm()
-	$Info.offline.visible = true
+	get_node("Info/offline").visible = true
 	GameState.connected = false
-	$Info.online.visible = false
+	get_node("Info/online").visible = false
 		
 func quit():
 	save_game()
