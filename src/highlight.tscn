@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://art/No shadow/128h/highlight.png" type="Texture" id=1]
+[ext_resource path="res://art/No shadow/128h/highlight.png" type="Texture2D" id=1]
 
-[node name="highlight" type="Sprite" groups=["highlights"]]
+[node name="highlight" type="Sprite2D" groups=["highlights"]]
 visible = false
 texture = ExtResource( 1 )

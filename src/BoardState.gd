@@ -2,7 +2,6 @@ extends Node
 
 signal capture(loc)
 signal castling(rookloc)
-#signal check(colour)
 signal checkmate(colour)
 signal stalemate(colour)
 signal highlight(sq)
@@ -22,11 +21,11 @@ class Piece:
 	var colour = "W"
 	var short_name = "P"
 	
-	func _init(c, t):
+	func _init(c,t):
 		colour = c
 		short_name = t
 	
-func _init() -> void:
+func _init():
 	state.resize(64)
 
 func _strtov(s):
@@ -258,7 +257,7 @@ func _legalmove(loc, dest):
 		return true
 	elif piece.short_name == "K":
 		if not kings_moved[piece.colour] and \
-			 	move[3] == 0 and (dest.x == 2 or dest.x==7) and \
+			move[3] == 0 and (dest.x == 2 or dest.x==7) and \
 				dest.y == (1 if piece.colour == "W" else 8):
 			for xx in range(loc.x+move[4], 	dest.x, move[4]):
 				if is_under_attack(Vector2(xx, dest.y), inactive):
@@ -312,4 +311,3 @@ func serialize():
 	return outputs
 	
 	
-

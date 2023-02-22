@@ -21,7 +21,7 @@ func move_to(dest, capture=null):
 		get_parent().get_square(dest).position, 
 		.2/ProjectSettings.get("global/movement_speed"), 
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)# , ease_type=Tween.EASE_IN_OUT)
-	$movement_tween.connect("tween_step", self, "_tween_step", [capture])
+	$movement_tween.connect("step_finished",Callable(self,"_tween_step").bind(capture))
 	$movement_tween.start()
 	
 func _tween_step(object, key, elapsed, value, x):
@@ -39,7 +39,7 @@ func capture():
 
 #func _on_Piece_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
 #	if event is InputEventMouseButton:
-#		if event.button_index == BUTTON_LEFT and event.pressed:
+#		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 #			emit_signal("clicked", self.short_name)
 
 

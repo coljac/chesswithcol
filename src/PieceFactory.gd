@@ -11,10 +11,10 @@ const NAMES = {
 	"r": "rook"
 }
 
-func get_piece(colour, name):
-	var new_piece = piece.instance()
+func get_piece(colour, sname):
+	var new_piece = piece.instantiate()
 	new_piece.colour = colour
-	new_piece.short_name = name
-	new_piece.long_name = NAMES[name.to_lower()]
-	new_piece.set_texture(load("res://" + location + colour.to_lower() + "_" + name.to_lower() + ".png"))
+	new_piece.short_name = sname
+	new_piece.long_name = NAMES[sname.to_lower()]
+	new_piece.set_texture(load("res://" + location + colour.to_lower() + "_" + sname.to_lower() + ".png"))
 	return new_piece

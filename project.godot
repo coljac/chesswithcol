@@ -6,14 +6,14 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
 config/name="ColChess"
 run/main_scene="res://src/Colchess.tscn"
-boot_splash/image="res://art/cws.jpg"
-boot_splash/bg_color=Color( 0.141176, 0.141176, 0.141176, 1 )
+config/features=PackedStringArray("4.0")
+boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 1)
 config/icon="res://icon.png"
 
 [autoload]
@@ -25,12 +25,11 @@ BoardState="*res://src/BoardState.gd"
 
 [display]
 
-window/size/width=1280
-window/size/height=1104
-window/size/test_width=960
-window/size/test_height=828
+window/size/viewport_width=1280
+window/size/viewport_height=1104
+window/size/window_width_override=960
+window/size/window_height_override=828
 window/stretch/mode="2d"
-window/stretch/aspect="keep"
 
 [global]
 

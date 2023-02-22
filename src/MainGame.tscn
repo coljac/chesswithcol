@@ -8,8 +8,8 @@ extents = Vector2( 644.5, 512.25 )
 [node name="MainGame" type="Node2D"]
 
 [node name="Control" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Area2D" type="Area2D" parent="."]
 

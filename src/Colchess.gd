@@ -2,9 +2,9 @@ extends Node2D
 var label  = preload("res://src/label.tscn")
 
 const server = "localhost"
-onready var persistFile = "user://colchess_" + GameState.player + ".save"
-onready var saveHandle = File.new()
-onready var peer = NetworkedMultiplayerENet.new()
+@onready var persistFile = "user://colchess_" + GameState.player + ".save"
+#@onready var saveHandle = FileAccess.new()
+@onready var peer = ENetMultiplayerPeer.new()
 var hello = preload("res://sounds/hello.mp3")
 var hmm = preload("res://sounds/hmmm.mp3")
 var heh = preload("res://sounds/heh.mp3")
@@ -12,8 +12,8 @@ var click = preload("res://sounds/clunk.mp3")
 var prefs_file = "user://colchess_prefs.json"
 
 func saveUserData(dict):
-	saveHandle.open(persistFile, File.WRITE)
-	saveHandle.store_line(to_json(dict))
+	var saveHandle = FileAccess.open(persistFile, FileAccess.WRITE)
+	saveHandle.store_line(JSON.new().stringify(dict))
 	saveHandle.close()
 
 func shello():
@@ -36,10 +36,12 @@ func shmm():
 		$audio.play()
 		
 func _enter_tree() -> void:
-	var f = File.new()
-	if f.file_exists(prefs_file):
-		f.open(prefs_file, File.READ)
-		var p_dict = parse_json(f.get_line())
+	var f = null
+	if FileAccess.file_exists(prefs_file):
+		f = FileAccess.open(prefs_file, FileAccess.READ)
+		var test_json_conv = JSON.new()
+		test_json_conv.parse(f.get_line())
+		var p_dict = test_json_conv.get_data()
 		GameState.player = p_dict['name']
 		f.close()
 	for arg in OS.get_cmdline_args():
@@ -78,7 +80,7 @@ func new_game(opponent):
 	else:
 		rpc("refresh_remote", {"new": GameState.player})
 				
-remote func refresh_remote(game_dict):
+@rpc("any_peer") func refresh_remote(game_dict):
 	if "new" in game_dict:
 		print("NEW")
 		return
@@ -92,19 +94,19 @@ func _ready():
 	var f = 1
 	var l = null
 	for c in "abcdefgh":
-		l = label.instance()
+		l = label.instantiate()
 		l.text = c
 		l.set_position(Vector2(f*128 - 64, 1047))
 		add_child(l)
 		f += 1		
 	f = 1
 	for c in "12345678":
-		l = label.instance()
+		l = label.instantiate()
 		l.text = c
 		l.set_position(Vector2(-20, 1024 - (f*128 - 64)))
 		add_child(l)
 		f += 1		
-	add_child_below_node(l, get_node("splash"))
+	add_sibling(l)#, get_node("splash"))
 	load_game()
 	
 	network_connect()
@@ -116,12 +118,13 @@ func network_connect():
 	else:
 		print("Not Col, connecting")
 		peer.create_client(server, 16751)
-	get_tree().network_peer = peer
-	get_tree().connect("network_peer_connected", self, "_connected")
-	get_tree().connect("network_peer_disconnected", self, "_disconnected")
-	get_tree().connect("connected_to_server", self, "connected")
-	get_tree().connect("connection_failed", self, "disconnected")
-	get_tree().connect("server_disconnected", self, "disconnected")
+	multiplayer.multiplayer_peer = peer
+#	get_tree().network_peer = peers
+	get_tree().connect("peer_connected",Callable(self,"_connected"))
+	get_tree().connect("peer_disconnected",Callable(self,"_disconnected"))
+	get_tree().connect("connected_to_server",Callable(self,"connected"))
+	get_tree().connect("connection_failed",Callable(self,"disconnected"))
+	get_tree().connect("server_disconnected",Callable(self,"disconnected"))
 	
 func _connected(id):
 	connected()
@@ -139,9 +142,9 @@ func connected():
 		# persistFile = "user://colchess_" + GameState.opponent + ".save"
 		#load_game()
 		
-remote func get_name():
-	print("ASKED")
-	return GameState.player
+#@rpc("any_peer") func get_name():
+#	print("ASKED")
+#	return GameState.player
 	
 func disconnected():
 	shmm()
@@ -154,15 +157,13 @@ func quit():
 	get_tree().quit()
 
 func _notification(what):
-	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		quit() 
 			
 func save_game():
 	var to_save = get_node("board").boardstate.serialize()
-	
-	var save_game = saveHandle
-	save_game.open(persistFile, File.WRITE)
-	save_game.store_line(to_json(to_save))
+	var save_game = FileAccess.open(persistFile, FileAccess.WRITE)
+	save_game.store_line(JSON.new().stringify(to_save))
 	save_game.close()
 
 
@@ -174,11 +175,12 @@ func _turn_update():
 	$turn_label.set_text("Turn: " + str($board.boardstate.turn) + " " + who)
 
 func load_game():
-	var save_game = saveHandle
-	if not save_game.file_exists(persistFile):
+	if not FileAccess.file_exists(persistFile):
 		return 
-	save_game.open(persistFile, File.READ)
-	var save_dict = parse_json(save_game.get_line())
+	var save_game = FileAccess.open(persistFile, FileAccess.READ)
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(save_game.get_line())
+	var save_dict = test_json_conv.get_data()
 	save_game.close()
 
 	if save_dict != null:
@@ -189,9 +191,8 @@ func load_game():
 
 # Save preferences
 func _on_preference_pane_name_changed() -> void:
-	var f = File.new()
-	f.open(prefs_file, File.WRITE)
-	f.store_line(to_json({"name": GameState.player}))
+	var f = FileAccess.open(prefs_file, FileAccess.WRITE)
+	f.store_line(JSON.new().stringify({"name": GameState.player}))
 	f.close()
 
 

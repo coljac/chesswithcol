@@ -1,69 +1,77 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=11 format=3 uid="uid://b8wfike74oap8"]
 
-[ext_resource path="res://src/board.tscn" type="PackedScene" id=1]
-[ext_resource path="res://src/Info.tscn" type="PackedScene" id=2]
-[ext_resource path="res://art/No shadow/1x/square gray light _1x_ns.png" type="Texture" id=3]
-[ext_resource path="res://src/capturezone.tscn" type="PackedScene" id=4]
-[ext_resource path="res://src/Colchess.gd" type="Script" id=5]
-[ext_resource path="res://src/gameover.tscn" type="PackedScene" id=6]
-[ext_resource path="res://art/cws.jpg" type="Texture" id=7]
-[ext_resource path="res://art/wood1.jpg" type="Texture" id=8]
-[ext_resource path="res://src/preference_pane.tscn" type="PackedScene" id=9]
-[ext_resource path="res://dtheme.tres" type="Theme" id=10]
+[ext_resource type="PackedScene" path="res://src/board.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://src/Info.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://bgkquq5yutgeh" path="res://art/No shadow/1x/square gray light _1x_ns.png" id="3"]
+[ext_resource type="PackedScene" path="res://src/capturezone.tscn" id="4"]
+[ext_resource type="Script" path="res://src/Colchess.gd" id="5"]
+[ext_resource type="PackedScene" path="res://src/gameover.tscn" id="6"]
+[ext_resource type="Texture2D" uid="uid://bvac5y3invoq6" path="res://art/cws.jpg" id="7"]
+[ext_resource type="Texture2D" uid="uid://c4ta8jebm0w5" path="res://art/wood1.jpg" id="8"]
+[ext_resource type="PackedScene" path="res://src/preference_pane.tscn" id="9"]
+[ext_resource type="Theme" uid="uid://cqjnw06kf5heb" path="res://dtheme.tres" id="10"]
 
 [node name="Colchess" type="Node2D"]
-position = Vector2( 22, 20 )
-script = ExtResource( 5 )
+position = Vector2(22, 20)
+script = ExtResource("5")
 
-[node name="Info" parent="." instance=ExtResource( 2 )]
-margin_left = 1087.0
-margin_top = -16.0
-margin_right = 1087.0
-margin_bottom = -16.0
+[node name="Info" parent="." instance=ExtResource("2")]
+layout_mode = 3
+anchors_preset = 15
+offset_left = 1087.0
+offset_top = -16.0
+offset_right = 1087.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="bgsprite" type="Sprite" parent="."]
+[node name="bgsprite" type="Sprite2D" parent="."]
 visible = false
-position = Vector2( 527, 532 )
-scale = Vector2( 2.42683, 2.44678 )
-texture = ExtResource( 3 )
+position = Vector2(527, 532)
+scale = Vector2(2.42683, 2.44678)
+texture = ExtResource("3")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-margin_left = -20.0
-margin_top = -19.0
-margin_right = 1069.0
-margin_bottom = 1081.0
+offset_left = -20.0
+offset_top = -19.0
+offset_right = 1069.0
+offset_bottom = 1081.0
 mouse_filter = 2
-texture = ExtResource( 8 )
-expand = true
+texture = ExtResource("8")
+expand_mode = 1
 stretch_mode = 2
 
-[node name="board" parent="." instance=ExtResource( 1 )]
-position = Vector2( 20, 20 )
+[node name="board" parent="." instance=ExtResource("1")]
+position = Vector2(20, 20)
 
-[node name="capturezone_them" parent="board" instance=ExtResource( 4 )]
-position = Vector2( 1143, 323 )
+[node name="capturezone_them" parent="board" instance=ExtResource("4")]
+position = Vector2(1143, 323)
 
-[node name="capturezone_us" parent="board" instance=ExtResource( 4 )]
-position = Vector2( 1142, 839 )
+[node name="capturezone_us" parent="board" instance=ExtResource("4")]
+position = Vector2(1142, 839)
 
-[node name="gameover" parent="." instance=ExtResource( 6 )]
+[node name="gameover" parent="." instance=ExtResource("6")]
 visible = false
-position = Vector2( 575, 535 )
+position = Vector2(575, 535)
 
 [node name="turn_label" type="Label" parent="."]
-margin_left = 748.0
-margin_top = -13.0
-margin_right = 1016.0
-margin_bottom = 10.0
-theme = ExtResource( 10 )
+offset_left = 748.0
+offset_top = -13.0
+offset_right = 1016.0
+offset_bottom = 10.0
+theme = ExtResource("10")
 text = "Turn: 1   White's turn (You)"
 
-[node name="preference_pane" parent="." instance=ExtResource( 9 )]
+[node name="preference_pane" parent="." instance=ExtResource("9")]
 visible = false
-margin_left = 263.0
-margin_top = 231.0
-margin_right = 263.0
-margin_bottom = 231.0
+layout_mode = 3
+anchors_preset = 15
+offset_left = 263.0
+offset_top = 231.0
+offset_right = 263.0
+offset_bottom = 231.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="audio" type="AudioStreamPlayer" parent="."]
 
@@ -71,22 +79,21 @@ margin_bottom = 231.0
 wait_time = 60.0
 
 [node name="splash" type="ColorRect" parent="."]
-margin_left = -22.0
-margin_top = -18.0
-margin_right = 1258.0
-margin_bottom = 1088.0
-color = Color( 0, 0, 0, 1 )
+offset_left = -22.0
+offset_top = -18.0
+offset_right = 1258.0
+offset_bottom = 1088.0
+color = Color(0, 0, 0, 1)
 
-[node name="pic" type="Sprite" parent="splash"]
-position = Vector2( 625, 533 )
-texture = ExtResource( 7 )
+[node name="pic" type="Sprite2D" parent="splash"]
+position = Vector2(625, 533)
+texture = ExtResource("7")
 
 [node name="splash_timer" type="Timer" parent="splash/pic"]
 wait_time = 1.5
 one_shot = true
 autostart = true
 
-[connection signal="name_changed" from="preference_pane" to="." method="_on_preference_pane_name_changed"]
 [connection signal="timeout" from="recon_timer" to="." method="_on_recon_timer_timeout"]
-[connection signal="timeout" from="splash/pic/splash_timer" to="splash/pic" method="queue_free"]
 [connection signal="timeout" from="splash/pic/splash_timer" to="splash" method="queue_free"]
+[connection signal="timeout" from="splash/pic/splash_timer" to="splash/pic" method="queue_free"]

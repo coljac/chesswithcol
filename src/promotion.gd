@@ -12,9 +12,10 @@ func _ready() -> void:
 		piece.position = Vector2(x, y)
 		x += 128
 		add_child(piece)
-		piece.connect("clicked", self, "_clicked")
+		piece.connect("clicked",Callable(self,"_clicked"))
 
 func _clicked(type):
 	print("Promotion choice: ", type)
 	emit_signal("promotion", type)
 	queue_free()
+

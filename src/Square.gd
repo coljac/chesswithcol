@@ -10,7 +10,7 @@ func _enter_tree() -> void:
 	
 func set_colour(c) -> void:
 	colour = c
-	$Sprite.texture = load("res://" + texture_loc + "square brown " + 
+	$Sprite2D.texture = load("res://" + texture_loc + "square brown " + 
 		("dark" if colour =="B" else "light") + ".png")
 
 func set_piece(spiece):
@@ -20,8 +20,8 @@ func set_piece(spiece):
 #	add_child(piece)
 	
 	
-func highlight(on=true):
-	$highlight.visible = on
+func highlight(checked=true):
+	$highlight.visible = checked
 	
 func _on_Area2D_mouse_entered() -> void:
 	if not GameState.connected:
@@ -41,7 +41,7 @@ func _on_Area2D_input_event(viewport: Node, event: InputEvent,
 shape_idx: int) -> void:
 	var st = board.boardstate			
 	if event is InputEventMouseButton:
-		if event.button_index == BUTTON_LEFT and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			if not GameState.connected:
 				return 
 			var state = board.selected_state
@@ -55,5 +55,5 @@ shape_idx: int) -> void:
 					if true or board.trial_move(board.selected_piece, location):	
 						board.move_piece(board.selected_piece.loc, location)
 						board.reset_state()
-		elif event.button_index == BUTTON_RIGHT and event.pressed:
+		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			board.reset_state()

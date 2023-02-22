@@ -6,7 +6,7 @@ extends Node2D
 
 # TODO:
 # Sound for move
-# Sync game state on load
+# Sync game state checked load
 # Chat
 # History
 # Timer
@@ -38,7 +38,7 @@ var initial_state = DEFAULT_SETUP
 
 
 	
-remote func move_remote(from, to):
+@rpc("any_peer") func move_remote(from, to):
 	move_piece(from, to, true)
 
 func _process(delta):
@@ -65,8 +65,10 @@ func pix_to_xy(pos):
 	return Vector2(col+1, row+1)
 		
 func _ready():
+	var spod = load("res://src/BoardState.gd")
+	spod.new()
 	boardstate = load("res://src/BoardState.gd").new()
-	boardstate.connect("castling", self, "_do_castle")
+	boardstate.connect("castling",Callable(self,"_do_castle"))
 	var clr = "B"
 	squares.resize(64)
 	# Add the squares (now I regret it)
@@ -74,7 +76,7 @@ func _ready():
 		clr = "B" if y%2==0 else "W"
 		for x in range(1, 9):
 			boardstate.set_state(Vector2(x, y), null)
-			var sq = square.instance()
+			var sq = square.instantiate()
 			sq.set_colour(clr)
 			sq.location = Vector2(x, y)
 
@@ -84,10 +86,10 @@ func _ready():
 			set_square(sq.location, sq)
 	
 	boardstate.string_to_board(initial_state)
-	boardstate.connect("highlight", self, "highlight_move")
-	boardstate.connect("stalemate", self, "stalemate")
-	boardstate.connect("checkmate", self, "checkmate")	
-#	boardstate.connect("capture", self, "_piece_captured")
+	boardstate.connect("highlight",Callable(self,"highlight_move"))
+	boardstate.connect("stalemate",Callable(self,"stalemate"))
+	boardstate.connect("checkmate",Callable(self,"checkmate"))	
+#	boardstate.connect("capture",Callable(self,"_piece_captured"))
 	refresh_from_state()
 
 func _piece_captured(pc):
@@ -109,7 +111,7 @@ func _do_castle(rookloc):
 			rookloc.y)).piece = piece
 	
 func highlight_square(xy):
-	var hl = highlight.instance()
+	var hl = highlight.instantiate()
 	hl.position = boardstate.xy_to_pix(xy)
 	add_child(hl)
 
@@ -148,9 +150,9 @@ func move_piece(from, dest, remoted=false):
 	GameState.move += 1
 	boardstate.turn += 1
 	if boardstate.promotion_needed() != null:
-		var prom = promotion.instance()
+		var prom = promotion.instantiate()
 		prom.position = Vector2(556, 556)
-		prom.connect("promotion", self, "promotion_chosen")
+		prom.connect("promotion",Callable(self,"promotion_chosen"))
 		add_child(prom)
 	boardstate.check_check()
 	boardstate.check_checkmate(boardstate.active)
